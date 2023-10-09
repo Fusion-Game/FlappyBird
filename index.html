@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flappy Bird</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      width: 320px;
+      height: 480px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    // Create a canvas element
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    // Create the bird object
+    var bird = {
+      x: 100,
+      y: 100,
+      velocity: 0
+    };
+
+    // Create the pipes array
+    var pipes = [];
+
+    // Create a function to draw the bird
+    function drawBird() {
+      ctx.fillStyle = "black";
+      ctx.fillRect(bird.x, bird.y, 20, 20);
+    }
+
+    // Create a function to draw the pipes
+    function drawPipes() {
+      for (var i = 0; i < pipes.length; i++) {
+        ctx.fillStyle = "green";
+        ctx.fillRect(pipes[i].x, pipes[i].y, 50, 100);
+      }
+    }
+
+    // Create a function to update the game state
+    function update() {
+      // Update the bird's velocity
+      bird.velocity += 0.5;
+
+      // Update the bird's y position
+      bird.y += bird.velocity;
+
+      // Check if the bird has collided with a pipe
+      for (var i = 0; i < pipes.length; i++) {
+        if (bird.x + 20 >= pipes[i].x && bird.x <= pipes[i].x + 50 && bird.y + 20 >= pipes[i].y && bird.y <= pipes[i].y + 100) {
+          // Game over
+          alert("Game over!");
+          return;
+        }
+      }
+
+      // Check if the bird has hit the ground or the top of the screen
+      if (bird.y >= canvas.height - 20 || bird.y <= 0) {
+        // Game over
+        alert("Game over!");
+        return;
+      }
+
+      // Create a new pipe if there are none on the screen
+      if (pipes.length === 0) {
+        pipes.push({
+          x: canvas.width,
+          y: Math.random() * (canvas.height - 200)
+        });
+      }
+
+      // Move the pipes to the left
+      for (var i = 0; i < pipes.length; i++) {
+        pipes[i].x -= 5;
+      }
+
+      // Remove pipes that have gone off the screen
+      for (var i = 0; i < pipes.length; i++) {
+        if (pipes[i].x < -50) {
+          pipes.splice(i, 1);
+        }
+      }
+    }
+
+    // Create a function to start the game loop
+    function startGameLoop() {
+      update();
+      drawBird();
+      drawPipes();
+
+      requestAnimationFrame(startGameLoop);
+    }
+
+    // Start the game loop
+    startGameLoop();
+  </script>
+</body>
+</html>
